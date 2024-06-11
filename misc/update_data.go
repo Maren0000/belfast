@@ -20,17 +20,18 @@ const (
 
 var (
 	dataFn = map[string]func(string, *gorm.DB) error{
-		"Items":      importItems,
-		"Buffs":      importBuffs,
-		"Ships":      importShips,
-		"Skins":      importSkins,
-		"Resources":  importResources,
-		"Pools":      importPools,
-		"BuildTimes": importBuildTimes,
-		"ShopOffers": importShopOffers,
+		"Items":       importItems,
+		"Buffs":       importBuffs,
+		"Ships":       importShips,
+		"Skins":       importSkins,
+		"Resources":   importResources,
+		"Pools":       importPools,
+		"BuildTimes":  importBuildTimes,
+		"ShopOffers":  importShopOffers,
+		"Meowfficers": importMeowfficers,
 	}
 	// Golang maps are unordered, so we need to keep track of the order of the keys ourselves
-	order = []string{"Items", "Buffs", "Ships", "Skins", "Resources", "Pools", "BuildTimes", "ShopOffers"}
+	order = []string{"Items", "Buffs", "Ships", "Skins", "Resources", "Pools", "BuildTimes", "ShopOffers", "Meowfficers"}
 )
 
 func getBelfastData(region string, file string) (*json.Decoder, *http.Response, error) {
@@ -243,6 +244,26 @@ func importShopOffers(region string, tx *gorm.DB) error {
 			Type:           offer.Type,
 		}
 		if err := tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&shopOffer).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func importMeowfficers(region string, tx *gorm.DB) error {
+	decoder, resp, err := getBelfastData(region, "commander_data_template.json")
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	decoder.Token() // Consume the start of the array '['
+
+	// Decode each elements
+	for decoder.More() {
+		var meofficer orm.Meowfficer
+		if err := decoder.Decode(&meofficer); err != nil {
+			return err
+		} else if err := tx.Clauses(clause.OnConflict{UpdateAll: true}).Create(&meofficer).Error; err != nil {
 			return err
 		}
 	}

@@ -62,6 +62,7 @@ func InitDatabase() bool {
 		&MailAttachment{},
 		&ShopOffer{},
 		&Message{},
+		&Meowfficer{},
 		// Servers
 		&ServerState{},
 		&Server{},
@@ -72,6 +73,7 @@ func InitDatabase() bool {
 		&YostarusMap{},
 		&OwnedShip{},
 		&OwnedSkin{},
+		&OwnedMeowfficer{},
 		&Punishment{},
 		&Commander{},
 		&CommanderItem{},
