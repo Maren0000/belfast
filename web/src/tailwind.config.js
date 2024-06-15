@@ -9,16 +9,12 @@ module.exports = {
     "text-primary",
     "text-secondary",
   ],
-  theme: {
-    extend: {},
-    fontFamily: {
-      'mono': ['"Berkeley Mono"'],
-    }
-  },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: ["dracula"],
+    themes: ["autumn", "nord"],
+    styled: true,
+    base: true,
+    utils: true,
+    darkTheme: "nord",
   },
-
-}
-
+};
